@@ -1,4 +1,57 @@
 /**
+ * Sets a new text value to vml button.
+ *
+ * @param msoData
+ * @param text
+ *
+ * @returns {*|string}
+ */
+Mautic.vmlButtonSetText = function (msoData, text) {
+    var indexOfEnd,
+        partFirst,
+        partLast,
+        resultMsoData = msoData,
+        indexOfStart = msoData.indexOf('vml-button-label');
+
+    if(indexOfStart >= 0) {
+        indexOfStart = msoData.indexOf('>', indexOfStart) + 1;
+        indexOfEnd = msoData.indexOf('</center>', indexOfStart);
+        partFirst = msoData.substring(0, indexOfStart);
+        partLast = msoData.substring(indexOfEnd);
+
+        resultMsoData = partFirst + text + partLast;
+    }
+
+    return resultMsoData;
+};
+
+/**
+ * Sets a new href value to vml button.
+ *
+ * @param msoData
+ * @param href
+ *
+ * @returns {*|string}
+ */
+Mautic.vmlButtonSetHref = function (msoData, href) {
+    var indexOfEnd,
+        partFirst,
+        partLast,
+        resultMsoData = msoData,
+        indexOfStart = msoData.indexOf('href') + 6;
+
+    if(indexOfStart >= 6) {
+        indexOfEnd = msoData.indexOf("\"", indexOfStart);
+        partFirst = msoData.substring(0, indexOfStart);
+        partLast = msoData.substring(indexOfEnd);
+
+        resultMsoData = partFirst + href + partLast;
+    }
+
+    return resultMsoData;
+};
+
+/**
  * Parses the query string and returns a parameter value
  * @param name
  * @returns {string}
@@ -1634,6 +1687,28 @@ Mautic.initSlotListeners = function() {
         } else if (fieldParam === 'separator-thickness') {
             var sep_color = params.slot.attr('data-param-separator-color');
             params.slot.find('hr').css('border', params.field.val() + 'px solid #'+ sep_color);
+        } else if (fieldParam === 'vmlbutton-text') {
+            params.slot.find('.vml-button').contents()
+                .filter(function () {
+                    return this.nodeType === 8;
+                })
+                .each(function (index){
+                    if (index === 0) {
+                        mQuery(this)[0].data = Mautic.vmlButtonSetText(mQuery(this)[0].data, params.field.val());
+                    }
+                });
+            params.slot.find('.vml-button-link').text(params.field.val());
+        } else if (fieldParam === 'vmlbutton-href') {
+            params.slot.find('.vml-button').contents()
+                .filter(function () {
+                    return this.nodeType === 8;
+                })
+                .each(function (index){
+                    if (index === 0) {
+                        mQuery(this)[0].data = Mautic.vmlButtonSetHref(mQuery(this)[0].data, params.field.val());
+                    }
+                });
+            params.slot.find('.vml-button-link').prop('href', params.field.val());
         }
 
         if (params.type == 'text') {

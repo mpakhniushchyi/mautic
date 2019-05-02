@@ -177,6 +177,14 @@ class BuilderSubscriber extends CommonSubscriber
                 800
             );
             $event->addSlotType(
+              'vmlbutton',
+              $this->translator->trans('mautic.core.slot.label.vmlbutton'),
+              'external-link',
+              'MauticCoreBundle:Slots:vmlbutton.html.php',
+              'slot_vmlbutton',
+              700
+            );
+            $event->addSlotType(
                 'socialfollow',
                 $this->translator->trans('mautic.core.slot.label.socialfollow'),
                 'twitter',
